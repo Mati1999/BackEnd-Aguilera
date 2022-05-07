@@ -1,0 +1,5 @@
+[
+    {"title":"Producto1","price":100,"thumbnail":"Link super copado","id":0},
+    {"title":"Producto2","price":120,"thumbnail":"Link super copado 2","id":1},
+    {"title":"Producto3","price":120,"thumbnail":"Link super copado 3","id":2}
+]
