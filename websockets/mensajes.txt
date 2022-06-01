@@ -1,1 +1,1 @@
-[{"autor":"Matias","text":"asdfasdf","fyh":"2022-06-01T00:12:06.432Z21:12:06"},{"autor":"Matias","text":"asdfasdf","fyh":"2022-06-01T00:12:27.736Z21:12:27"},{"autor":"Mati","text":"Hola mi amor","fyh":"21:12:32"},{"autor":"Lucia","text":"asdfasdf","fyh":"Tue May 31 2022 21:13:59"}]
+[{"autor":"aguileramati50@gmail.com","text":"Que buena aplicación que me he armado!","fyh":"Wed Jun 01 2022 12:09:10"},{"autor":"richard@gmail.com","text":"La verdad que si Mati, un 10!","fyh":"Wed Jun 01 2022 12:09:34"}]

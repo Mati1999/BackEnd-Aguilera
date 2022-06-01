@@ -13,9 +13,9 @@ const enviarMensaje = (e) => {
 const crearEtiquetasMensaje = (mensaje) => {
     const { autor,text,fyh } = mensaje;
     return `
-    <div style='display:flex; align-items:center'>
-        <strong style='color:blue; margin:0 5px 0 0'>${autor}</strong>
-        <p style='color:brown; margin:0 5px 0 0'>${fyh}</p>
+    <div>
+        <strong style='color:blue'>${autor}</strong>
+        <p style='color:brown'>${fyh}</p>
         <i style='color:green'>${text}</i>
     </div>
     `;
@@ -36,6 +36,9 @@ const enviarProducto = (e) => {
     const price = document.getElementById('price').value;
     const thumbnail = document.getElementById('thumbnail').value;
     const producto = { title,price,thumbnail };
+    title = '';
+    price = '';
+    thumbnail = '';
     socket.emit('new_products',producto);
     return false;
 }
@@ -45,7 +48,7 @@ const crearEtiquetasProductos = (producto) => {
     return `
     <tr>
         <td>${title}</td>
-        <td>${price}</td>
+        <td>$ ${price}</td>
         <td><img style="width: 50px; height:50px" src=${thumbnail} alt=""></td>
     </tr>
     `;
