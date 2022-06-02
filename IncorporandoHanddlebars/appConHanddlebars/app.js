@@ -18,7 +18,6 @@ app.set('views','./IncorporandoHanddlebars/appConHanddlebars/hbs_views');
 app.set('view engine','hbs');
 
 
-//Creo clase conteneodor
 class Contenedor {
     constructor(archivo) {
         this.archivo = archivo;
@@ -91,14 +90,13 @@ class Contenedor {
 
 let cont1 = new Contenedor('IncorporandoHanddlebars/appConHanddlebars/productos.txt');
 
-
 app.get('/productos',async (req,res) => {
-    productos = await cont1.getAll() === '' ? '' : await cont1.getAll();
+    let productos = await cont1.getAll() === '' ? '' : await cont1.getAll();
     console.log(productos);
     res.render('prodAgregados',{ productos });
 });
 
-app.get('/',async (req,res) => {
+app.get('/',(req,res) => {
     res.render('formulario');
 });
 

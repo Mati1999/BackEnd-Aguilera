@@ -84,7 +84,7 @@ let cont1 = new Contenedor('IncorporandoHanddlebars/appConPug/productos.txt');
 
 
 app.get('/productos',async (req,res) => {
-    productos = await cont1.getAll() === '' ? [{ title: 'No hay datos cargados' }] : await cont1.getAll();
+    productos = await cont1.getAll() === '' ? [{}] : await cont1.getAll();
     res.render('prodAgregados',{ productos });
 });
 
