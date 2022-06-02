@@ -32,9 +32,9 @@ socket.on('messages',(messages) => agregarMensajes(messages));
 
 //Productos
 const enviarProducto = (e) => {
-    const title = document.getElementById('title').value;
-    const price = document.getElementById('price').value;
-    const thumbnail = document.getElementById('thumbnail').value;
+    let title = document.getElementById('title').value;
+    let price = document.getElementById('price').value;
+    let thumbnail = document.getElementById('thumbnail').value;
     const producto = { title,price,thumbnail };
     title = '';
     price = '';
@@ -55,12 +55,12 @@ const crearEtiquetasProductos = (producto) => {
 }
 
 const agregarProducto = (producto) => {
-    console.log(producto);
     if (producto !== '') {
         const productoFinal = producto.map(producto => crearEtiquetasProductos(producto)).join('<br>');
-        console.log(productoFinal);
         console.log(document.getElementById('productsContainer'));
         document.getElementById('productsContainer').innerHTML = productoFinal;
+    } else {
+        document.getElementById('productsContainer').innerHTML = '<h2>No hay productos</h2>';
     }
 }
 

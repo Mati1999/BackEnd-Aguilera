@@ -111,7 +111,7 @@
     text-align: left;
 }
 
-.productsTable h2 {
+.productsTable tbody h2 {
     color: white;
     font-size: 1.5rem;
     text-align: center;
