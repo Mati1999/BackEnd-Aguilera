@@ -1,0 +1,1 @@
+setTimeout((()=>{console.log("frase 1")}),1e3),setTimeout((()=>{console.log("frase 2")}),2e3),setTimeout((()=>{console.log("frase 3")}),3e3);

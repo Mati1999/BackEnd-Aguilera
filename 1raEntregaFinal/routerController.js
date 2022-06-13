@@ -11,7 +11,7 @@ app.use(express.urlencoded({ extended: true }));
 const middlewareAutenticacion = (req,res,next) => {
     req.user = {
         fullName: "Matias Aguilera",
-        isAdmin: false
+        isAdmin: true
     };
     next();
 }

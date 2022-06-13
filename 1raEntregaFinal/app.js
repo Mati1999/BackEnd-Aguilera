@@ -10,7 +10,7 @@ app.use('/productos',productRouter);
 app.use('/carrito',carritoRouter);
 
 app.use((req,res,next) => {
-    res.status(404).send({
+    res.status(400).send({
         error: 'Ruta no encontrada'
     });
 })
