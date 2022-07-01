@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const { productRouter,carritoRouter } = require('./contenedores/routerController');
+const productRouter = require('./router/productoRouter');
 
 
 app.use(express.json());

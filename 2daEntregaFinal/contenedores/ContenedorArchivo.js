@@ -1,3 +1,7 @@
+
+//AQUÍ CREO LA CLASE CONTENEDOR ARCHIVO QUE TIENE MÉTODOS GENÉRICOS PARA USAR EN ProductosDaoArchivo y CarritoDaoArchivo
+//LAS CARACTERÍSTICAS ÚNICAS DE CADA CONTENEDOR PRODUCTO O CARRITO, DEBO ESCRIBIRLAS EN SUS RESPECTIVOS ARCHIVOS(Ejemplo el id de productos o el de carrito, cada uno tiene su lógica para crearlos)
+
 const express = require('express');
 const app = express();
 const fs = require('fs');
@@ -11,71 +15,19 @@ class Contenedor {
         this.archivo = archivo;
     }
 
-    static id = 0;
-    static timestamp = Date.now();
-    static codigo = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
-    async save(producto) {
+    async save(json,prodAgregado) {
         try {
-            let json = '';
-            let contenido = await fs.promises.readFile(this.archivo,'utf-8');
-            if (contenido === '') {
-                console.log('No hay datos');
-                if (producto.nombre == '' || producto.precio == '' || producto.foto == '' || producto.foto == undefined || producto.stock == '' || producto.descipcion == '') {
-                    console.log('No se puede guardar el producto');
+            await fs.promises.writeFile(this.archivo,json,(err) => {
+                if (err) {
+                    console.log('Hubo un error al cargar el producto');
                 } else {
-                    producto.id = Contenedor.id;
-                    producto.timestamp = Contenedor.timestamp;
-                    producto.codigo = Contenedor.codigo;
-                    json = JSON.stringify([producto]);
-                    await fs.promises.writeFile(this.archivo,json,(err) => {
-                        if (err) {
-                            console.log('Hubo un error al cargar el producto');
-                        } else {
-                            console.log(producto.id);
-                        }
-                    })
-                    Contenedor.id++;
-                    Contenedor.timestamp = Date.now();
-                    Contenedor.codigo = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+                    console.log(prodAgregado.id);
                 }
-            } else {
-                let productos = JSON.parse(contenido);
-                productos.forEach(prod => {
-                    if (Contenedor.id <= prod.id) {
-                        Contenedor.id++;
-                    }
-                    if (Contenedor.id == prod.id) {
-                        Contenedor.id++;
-                    }
-                });
-                for (let i = 0; i < productos.length; i++) {
-                    if (productos[i].nombre === producto.nombre || productos[i].foto === producto.foto) {
-                        console.log('El producto ya existe');
-                    } else if (producto.nombre == '' || producto.precio == '' || producto.foto == '' || producto.foto == undefined || producto.stock == '' || producto.descipcion == '') {
-                        console.log('No se pudo cargar el producto, hay campos vacíos');
-                    } else {
-                        producto.id = Contenedor.id;
-                        producto.timestamp = Contenedor.timestamp;
-                        producto.codigo = Contenedor.codigo;
-                        json = JSON.stringify([...productos,producto]);
-                        await fs.promises.writeFile(this.archivo,json,(err) => {
-                            if (err) {
-                                console.log('Hubo un error al cargar el producto');
-                            } else {
-                                console.log(producto.id);
-                            }
-                        })
-                    }
-                }
-                Contenedor.id++;
-                Contenedor.timestamp = Date.now();
-                Contenedor.codigo = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
-            }
-
+            })
         } catch (error) {
             console.log(error);
         }
-        return producto;
+        return prodAgregado;
     }
 
 
@@ -84,7 +36,7 @@ class Contenedor {
         let productos = JSON.parse(contenido);
         let producto = productos.find(producto => producto.id === id);
         if (producto) {
-            console.log(producto);
+            console.log('Existe!');
         } else {
             console.log('No existe el producto');
         }
@@ -94,14 +46,10 @@ class Contenedor {
     async getAll() {
         let contenido = await fs.promises.readFile(this.archivo,'utf-8')
         let productos = JSON.parse(contenido);
-        console.log(productos);
         return productos;
     }
 
-    async deleteById(id) {
-        let contenido = await fs.promises.readFile(this.archivo,'utf-8')
-        let productos = JSON.parse(contenido);
-        let arraySinElProducto = productos.filter(prod => prod.id !== id);
+    async deleteById(arraySinElProducto) {
         fs.writeFile(this.archivo,JSON.stringify(arraySinElProducto),(err) => {
             if (err) {
                 console.log('Hubo un error al eliminar el producto');
@@ -109,23 +57,10 @@ class Contenedor {
                 console.log('Producto eliminado');
             }
         })
+        return arraySinElProducto
     }
 
-    async updateById(id,producto) {
-        let contenido = await fs.promises.readFile(this.archivo,'utf-8')
-        let productos = JSON.parse(contenido);
-        let productoActualizado = productos.map(prod => {
-            if (prod.id === id) {
-                console.log(producto.foto);
-                prod.nombre = producto.nombre === '' || producto.nombre === undefined ? prod.nombre : producto.nombre;
-                prod.precio = producto.precio === '' || producto.precio === undefined ? prod.precio : producto.precio;
-                prod.foto = producto.foto === '' || producto.foto === undefined ? prod.foto : producto.foto;
-                prod.stock = producto.stock === '' || producto.stock === undefined ? prod.stock : producto.stock;
-                prod.foto = producto.foto === '' || producto.foto === undefined ? prod.foto : producto.foto;
-                prod.descripcion = producto.descripcion === '' || producto.descripcion === undefined ? prod.descripcion : producto.descripcion;
-            }
-            return prod;
-        })
+    async updateById(productoActualizado) {
         fs.writeFile(this.archivo,JSON.stringify(productoActualizado),(err) => {
             if (err) {
                 console.log('Hubo un error al actualizar el producto');
@@ -133,6 +68,7 @@ class Contenedor {
                 console.log('Producto actualizado');
             }
         })
+        return productoActualizado;
     }
 }
 
@@ -216,7 +152,6 @@ class Carrito {
     async getAll() {
         let contenido = await fs.promises.readFile(this.archivo,'utf-8')
         let productos = JSON.parse(contenido);
-        console.log(productos);
         return productos;
     }
 
@@ -250,4 +185,4 @@ class Carrito {
 
 }
 
-module.exports = { Contenedor,Carrito };
+module.exports = Contenedor;
