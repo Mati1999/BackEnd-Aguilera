@@ -75,7 +75,7 @@ class ProductosDaoArchivo {
     }
 
     async deleteById(id) {
-        let prod = await contenedorMongo.deleteById(id)
+        await contenedorMongo.deleteById(id)
     }
 
     async updateById(id,producto) {
