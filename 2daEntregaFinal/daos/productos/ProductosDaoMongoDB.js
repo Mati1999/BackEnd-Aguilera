@@ -22,21 +22,21 @@ class ProductosDaoMongo {
                 if (producto.nombre == '' || producto.precio == '' || producto.foto == '' || producto.foto == undefined || producto.stock == '' || producto.descipcion == '') {
                     console.log('No se puede guardar el producto');
                 } else {
-                    producto._id = ProductosDaoArchivo._id;
-                    producto.timestamp = ProductosDaoArchivo.timestamp;
-                    producto.codigo = ProductosDaoArchivo.codigo;
+                    producto._id = ProductosDaoMongo._id;
+                    producto.timestamp = ProductosDaoMongo.timestamp;
+                    producto.codigo = ProductosDaoMongo.codigo;
                     await contenedorMongo.save(producto);
-                    ProductosDaoArchivo._id++;
-                    ProductosDaoArchivo.timestamp = Date.now();
-                    ProductosDaoArchivo.codigo = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+                    ProductosDaoMongo._id++;
+                    ProductosDaoMongo.timestamp = Date.now();
+                    ProductosDaoMongo.codigo = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
                 }
             } else {
                 contenido.forEach(prod => {
-                    if (ProductosDaoArchivo._id <= prod._id) {
-                        ProductosDaoArchivo._id++;
+                    if (ProductosDaoMongo._id <= prod._id) {
+                        ProductosDaoMongo._id++;
                     }
-                    if (ProductosDaoArchivo._id == prod._id) {
-                        ProductosDaoArchivo._id++;
+                    if (ProductosDaoMongo._id == prod._id) {
+                        ProductosDaoMongo._id++;
                     }
                 });
                 for (let i = 0; i < contenido.length; i++) {
@@ -45,16 +45,16 @@ class ProductosDaoMongo {
                     } else if (producto.nombre == '' || producto.precio == '' || producto.foto == '' || producto.foto == undefined || producto.stock == '' || producto.descipcion == '') {
                         console.log('No se pudo cargar el producto, hay campos vacíos');
                     } else {
-                        console.log(ProductosDaoArchivo._id);
-                        producto._id = ProductosDaoArchivo._id;
-                        producto.timestamp = ProductosDaoArchivo.timestamp;
-                        producto.codigo = ProductosDaoArchivo.codigo;
+                        console.log(ProductosDaoMongo._id);
+                        producto._id = ProductosDaoMongo._id;
+                        producto.timestamp = ProductosDaoMongo.timestamp;
+                        producto.codigo = ProductosDaoMongo.codigo;
                         await contenedorMongo.save(producto);
                     }
                 }
-                ProductosDaoArchivo._id++;
-                ProductosDaoArchivo.timestamp = Date.now();
-                ProductosDaoArchivo.codigo = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+                ProductosDaoMongo._id++;
+                ProductosDaoMongo.timestamp = Date.now();
+                ProductosDaoMongo.codigo = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
             }
 
         } catch (error) {

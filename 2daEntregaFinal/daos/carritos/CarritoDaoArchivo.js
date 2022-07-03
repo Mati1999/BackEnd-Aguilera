@@ -3,7 +3,8 @@
 import express from 'express';
 const app = express();
 import Contenedor from '../../contenedores/ContenedorArchivo.js';
-const contenedorArchivo = new Contenedor('carrito.txt');
+import config from '../../config.js'
+const contenedorArchivo = new Contenedor(config.archivo.pathCarrito);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

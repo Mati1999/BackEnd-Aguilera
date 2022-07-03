@@ -1,21 +1,24 @@
 import config from '../config.js'
 import 'dotenv/config'
 import { MongoClient } from 'mongodb'
-// const collectionCarrito = config.mongodb.collectionCarrito;
+import admin from 'firebase-admin';
+import serviceEcommerce from '../coderback.js';
 
 
 import DaoProdArchivo from './productos/ProductosDaoArchivo.js'
 import DaoProdMongo from './productos/ProductosDaoMongoDB.js'
-// import DaoProdFirebase from './productos/ProductosDaoFirebase.js'
+import DaoProdFirebase from './productos/ProductosDaoFirebase.js'
 
 import DaoCartArchivo from './carritos/CarritoDaoArchivo.js';
 import DaoCartMongo from './carritos/CarritoDaoMongoDB.js'
-// import DaoCartFirebase from './carritos/CarritosDaoFirebase.js'
+import DaoCartFirebase from './carritos/CarritosDaoFirebase.js'
 
 const motor = process.env.DATA_BASE;
 let contenedorProdImportado;
 let contenedorCarritoImportado;
 let conectionMongo;
+let db;
+let ConnectionFirestore;
 if (motor === 'archivo') {
     contenedorProdImportado = new DaoProdArchivo(config.archivo.pathProductos)
     contenedorCarritoImportado = new DaoCartArchivo(config.archivo.pathCarrito)
@@ -31,12 +34,18 @@ else if (motor === 'mongo') {
 
 }
 else if (motor === 'firebase') {
-    // contenedorProdImportado = new DaoProdFirebase(config.firebase)
-    // contenedorCarritoImportado = new DaoCartFirebase(config.firebase)
+    admin.initializeApp({
+        credential: admin.credential.cert(serviceEcommerce),
+        databaseURL: config.firebase.url
+    });
+    db = admin.firestore()
+    ConnectionFirestore = db;
+    contenedorProdImportado = new DaoProdFirebase(config.firebase.collectionProducts)
+    contenedorCarritoImportado = new DaoCartFirebase(config.firebase.collectionCarrito)
     console.log('Conectado con firebase');
 
 }
 
 const ContenedorProductos = contenedorProdImportado;
 const ContenedorCarrito = contenedorCarritoImportado;
-export { ContenedorProductos,ContenedorCarrito,conectionMongo };
+export { ContenedorProductos,ContenedorCarrito,conectionMongo,ConnectionFirestore };
