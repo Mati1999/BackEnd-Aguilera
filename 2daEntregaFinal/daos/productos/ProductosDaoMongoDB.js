@@ -6,7 +6,7 @@ import config from '../../config.js';
 const contenedorMongo = new Contenedor(config.mongodb.collectionProducts);
 
 
-class ProductosDaoArchivo {
+class ProductosDaoMongo {
     constructor(archivo) {
         this.archivo = archivo;
     }
@@ -90,4 +90,4 @@ class ProductosDaoArchivo {
         await contenedorMongo.updateById(productoDb)
     }
 }
-export default ProductosDaoArchivo;
+export default ProductosDaoMongo;

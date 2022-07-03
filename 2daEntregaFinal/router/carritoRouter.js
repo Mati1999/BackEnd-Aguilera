@@ -12,7 +12,7 @@ carritoRouter.post('/',async (req,res) => {
 //Elimino el carrito que quiero haciendo /carrito/id
 carritoRouter.delete('/:id',async (req,res) => {
     let id = req.params.id;
-    await contenedor.deleteCart(id);
+    await contenedor.deleteCart(parseInt(id));
     res.send('Carrito eliminado');
 })
 
@@ -34,7 +34,7 @@ carritoRouter.post('/:id/productos',async (req,res) => {
 carritoRouter.delete('/:id/productos/:id_prod',async (req,res) => {
     let id = req.params.id;
     let prodId = req.params.id_prod;
-    await contenedor.deleteProdInCart(id,prodId);
+    await contenedor.deleteProdInCart(parseInt(id),parseInt(prodId));
     res.send('Producto eliminado');
 })
 

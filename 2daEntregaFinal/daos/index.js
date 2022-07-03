@@ -9,7 +9,7 @@ import DaoProdMongo from './productos/ProductosDaoMongoDB.js'
 // import DaoProdFirebase from './productos/ProductosDaoFirebase.js'
 
 import DaoCartArchivo from './carritos/CarritoDaoArchivo.js';
-// import DaoCartMongo from './carritos/CarritoDaoMongoDB.js'
+import DaoCartMongo from './carritos/CarritoDaoMongoDB.js'
 // import DaoCartFirebase from './carritos/CarritosDaoFirebase.js'
 
 const motor = process.env.DATA_BASE;
@@ -26,7 +26,7 @@ else if (motor === 'mongo') {
     await mongo.connect();
     conectionMongo = mongo;
     contenedorProdImportado = new DaoProdMongo(config.mongodb.collectionProducts)
-    // contenedorCarritoImportado = new DaoCartMongo(collectionCarrito)
+    contenedorCarritoImportado = new DaoCartMongo(config.mongodb.collectionCarrito)
     console.log('Conectado con mongo');
 
 }
@@ -39,4 +39,4 @@ else if (motor === 'firebase') {
 
 const ContenedorProductos = contenedorProdImportado;
 const ContenedorCarrito = contenedorCarritoImportado;
-export { ContenedorProductos,/* ContenedorCarrito,*/conectionMongo };
+export { ContenedorProductos,ContenedorCarrito,conectionMongo };

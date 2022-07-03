@@ -32,7 +32,7 @@ class Contenedor {
 
     async deleteById(id) {
         await conectionMongo.db('ecommerce').collection(this.collection).deleteOne({ _id: id });
-        console.log('Eliminado');
+        console.log('se ha Eliminado');
     }
 
     async updateById(productoActualizado) {
