@@ -1,10 +1,7 @@
-const express = require('express');
+import express from 'express';
 const productRouter = express.Router();
-
-const ContenedorProductos = require('../daos/index');
-const DaoProdArchivo = require('../daos/productosDosArchivo')
-
-let contenedor = new DaoProdArchivo(ContenedorProductos);
+import { ContenedorProductos } from '../daos/index.js';
+let contenedor = ContenedorProductos;
 
 
 const middlewareAutenticacion = (req,res,next) => {
@@ -30,7 +27,6 @@ productRouter.get('/',middlewareAutenticacion,async (req,res) => {
 
 // Obtener 1 producto
 productRouter.get('/:id',middlewareAutenticacion,async (req,res) => {
-    console.log(req.params.id);
     let prodSelected = await contenedor.getById(parseInt(req.params.id));
 
     if (prodSelected) {
@@ -63,4 +59,4 @@ productRouter.delete('/:id',middlewareAutenticacion,middlewareAutorizacion,async
     res.send(prodDeleted);
 })
 
-module.exports = productRouter;
+export default productRouter;

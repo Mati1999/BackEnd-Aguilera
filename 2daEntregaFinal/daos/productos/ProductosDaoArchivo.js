@@ -1,16 +1,13 @@
 //ACÁ CREO UN CONTENEDOR QUE VA A TENER MÉTODOS CON NOMBRES DISTINTOS, PERO QUE APLIQUEN LOS MÉTODOS DEL ContenedorArchivo.
 //ESTE DAO VA A SER LLAMADO DESDE EL ROUTER PARA EJECUTARSE LUEGO EN EL SERVIDOR.
-const express = require('express');
+import express from 'express';
 const app = express();
-const fs = require('fs');
-const Contenedor = require('../../contenedores/ContenedorArchivo');
-
-const contenedorArchivo = new Contenedor('../../productos.txt');
+import Contenedor from '../../contenedores/ContenedorArchivo.js';
+const contenedorArchivo = new Contenedor('productos.txt');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// PRODUCT ROUTER
 class ProductosDaoArchivo {
     constructor(archivo) {
         this.archivo = archivo;
@@ -28,23 +25,22 @@ class ProductosDaoArchivo {
                 if (producto.nombre == '' || producto.precio == '' || producto.foto == '' || producto.foto == undefined || producto.stock == '' || producto.descipcion == '') {
                     console.log('No se puede guardar el producto');
                 } else {
-                    producto.id = Contenedor.id;
-                    producto.timestamp = Contenedor.timestamp;
-                    producto.codigo = Contenedor.codigo;
+                    producto.id = ProductosDaoArchivo.id;
+                    producto.timestamp = ProductosDaoArchivo.timestamp;
+                    producto.codigo = ProductosDaoArchivo.codigo;
                     json = JSON.stringify([producto]);
                     await contenedorArchivo.save(json);
-                    Contenedor.id++;
-                    Contenedor.timestamp = Date.now();
-                    Contenedor.codigo = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+                    ProductosDaoArchivo.id++;
+                    ProductosDaoArchivo.timestamp = Date.now();
+                    ProductosDaoArchivo.codigo = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
                 }
             } else {
-                let contenido = JSON.parse(contenido);
                 contenido.forEach(prod => {
-                    if (Contenedor.id <= prod.id) {
-                        Contenedor.id++;
+                    if (ProductosDaoArchivo.id <= prod.id) {
+                        ProductosDaoArchivo.id++;
                     }
-                    if (Contenedor.id == prod.id) {
-                        Contenedor.id++;
+                    if (ProductosDaoArchivo.id == prod.id) {
+                        ProductosDaoArchivo.id++;
                     }
                 });
                 for (let i = 0; i < contenido.length; i++) {
@@ -53,17 +49,18 @@ class ProductosDaoArchivo {
                     } else if (producto.nombre == '' || producto.precio == '' || producto.foto == '' || producto.foto == undefined || producto.stock == '' || producto.descipcion == '') {
                         console.log('No se pudo cargar el producto, hay campos vacíos');
                     } else {
-                        producto.id = Contenedor.id;
-                        producto.timestamp = Contenedor.timestamp;
-                        producto.codigo = Contenedor.codigo;
+                        console.log(ProductosDaoArchivo.id);
+                        producto.id = ProductosDaoArchivo.id;
+                        producto.timestamp = ProductosDaoArchivo.timestamp;
+                        producto.codigo = ProductosDaoArchivo.codigo;
                         json = JSON.stringify([...contenido,producto]);
                         //ACÁ EJECUTO EL SAVE DEL CONTENDOR
                         await contenedorArchivo.save(json);
                     }
                 }
-                Contenedor.id++;
-                Contenedor.timestamp = Date.now();
-                Contenedor.codigo = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+                ProductosDaoArchivo.id++;
+                ProductosDaoArchivo.timestamp = Date.now();
+                ProductosDaoArchivo.codigo = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
             }
 
         } catch (error) {
@@ -105,4 +102,4 @@ class ProductosDaoArchivo {
         await contenedorArchivo.updateById(productoActualizado)
     }
 }
-module.exports = ProductosDaoArchivo;
+export default ProductosDaoArchivo;

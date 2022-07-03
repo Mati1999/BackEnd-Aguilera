@@ -1,19 +1,22 @@
-const express = require('express');
+import express,{ json,urlencoded } from 'express';
 const app = express();
-const productRouter = require('./router/productoRouter');
+import productRouter from './router/productoRouter.js';
+// import carritoRouter from './router/carritoRouter.js';
 
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(json());
+app.use(urlencoded({ extended: true }));
 
 app.use('/productos',productRouter);
-app.use('/carrito',carritoRouter);
+// app.use('/carrito',carritoRouter);
 
-app.use((req,res,next) => {
-    res.status(400).send({
-        error: 'Ruta no encontrada'
-    });
-})
+
+//Me tira este error: Cannot set headers after they are sent to the client
+
+// app.use((req,res,next) => {
+//     res.status(400).send({
+//         error: 'Ruta no encontrada'
+//     });
+// })
 
 app.listen(8080,() => {
     console.log('Servidor iniciado');

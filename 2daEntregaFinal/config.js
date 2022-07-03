@@ -3,23 +3,24 @@
 
 import fs from 'fs'
 
-
 export default {
     archivo: {
-        pathCarrito: './carrito.txt', //donde tengas tus archivos
-        pathProductos: '../../productos.txt',
+        pathCarrito: './carrito.txt',
+        pathProductos: './productos.txt',
     },
     mongodb: {
-        //la configuración de mongo
-        cnxStr: 'mongodb+ srv:/ tuusuario: @cluster0.xdtie.mongodb.net/?retryWrites=true&w=majority',
-        options: {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-            useCreateIndex: true,
-            serverSelectionTimeoutMS: 5000,
-        }
+        mongo: "mongodb+srv://matias:351426351@cluster0.6lyvpyc.mongodb.net/?retryWrites=true&w=majority",
+        db: "ecommerce",
+        collectionProducts: "productos",
+        collectionCarrito: "carrito",
+        // options: {
+        //     useNewUrlParser: true,
+        //     useUnifiedTopology: true,
+        //     useCreateIndex: true,
+        //     serverSelectionTimeoutMS: 5000,
+        // }
     },
     firebase: {
-        serviceAccount: JSON.parse(fs.readFileSync('TuJsonDeFirebase','utf8')) // acá le pasas el json
+        // serviceAccount: JSON.parse(fs.readFileSync('TuJsonDeFirebase','utf8')) // acá le pasas el json
     }
 }

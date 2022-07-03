@@ -1,29 +1,42 @@
-//AQUÍ IMPORTO ,DEPENDIENDO DE LA VARIABLE DE ENTORNO QUE SELECCIONE, LOS CONTENEDORES DAO QUE CORRESPONDAN.
-//LUEGO LOS EXPORTO PARA USARLOS EN LOS ROUTERS, DONDE SOLAMENTE VOY A IMPORTAR UN CONTENEDOR PARA CARRITO Y OTRO PARA PRODUCTOS.
+import config from '../config.js'
+import 'dotenv/config'
+import { MongoClient } from 'mongodb'
+// const collectionCarrito = config.mongodb.collectionCarrito;
 
-//EN LOS ARCHIVOS routerCarrito.js y routerProductos.js IMPORTO LOS CONTENEDORES QUE EXPORTO DESDE ACÁ Y LUEGO LOS USO EN LAS RUTAS.
 
-const config = require('../config')
+import DaoProdArchivo from './productos/ProductosDaoArchivo.js'
+import DaoProdMongo from './productos/ProductosDaoMongoDB.js'
+// import DaoProdFirebase from './productos/ProductosDaoFirebase.js'
 
-require('dotenv').config()
+import DaoCartArchivo from './carritos/CarritoDaoArchivo.js';
+// import DaoCartMongo from './carritos/CarritoDaoMongoDB.js'
+// import DaoCartFirebase from './carritos/CarritosDaoFirebase.js'
+
 const motor = process.env.DATA_BASE;
+let contenedorProdImportado;
+let contenedorCarritoImportado;
+let conectionMongo;
+if (motor === 'archivo') {
+    contenedorProdImportado = new DaoProdArchivo(config.archivo.pathProductos)
+    contenedorCarritoImportado = new DaoCartArchivo(config.archivo.pathCarrito)
+    console.log('Conectado con archivo');
+}
+else if (motor === 'mongo') {
+    const mongo = new MongoClient(config.mongodb.mongo);
+    await mongo.connect();
+    conectionMongo = mongo;
+    contenedorProdImportado = new DaoProdMongo(config.mongodb.collectionProducts)
+    // contenedorCarritoImportado = new DaoCartMongo(collectionCarrito)
+    console.log('Conectado con mongo');
 
-let contenedorProdImportado = config.archivo.pathProductos;
-// if (motor == 'firebase') contenedorProdImportado = './productos/ProductosDaoFirebase.js';
-// else if (motor == 'mongo') contenedorProdImportado = './productos/ProductosDaoMongoDb.js';
+}
+else if (motor === 'firebase') {
+    // contenedorProdImportado = new DaoProdFirebase(config.firebase)
+    // contenedorCarritoImportado = new DaoCartFirebase(config.firebase)
+    console.log('Conectado con firebase');
 
-// let contenedorCarritoImportador = './carritos/CarritoArchivo.js';
-// if (motor == 'firebase') contenedorCarritoImportador = './carritos/CarritoFirebase.js';
-// else if (motor == 'mongo') contenedorCarritoImportador = './carritos/CarritoMongoDb.js';
+}
 
-// const ejecutar = async () => {
-//     const contenedor = await import(contenedorProdImportado);
-//     const carrito = await import(contenedorCarritoImportador);
-//     let contenedorcito = new contenedor.Contenedor('../productos.txt')
-//     let cart = new carrito.Carrito('../carrito.txt');
-// }
-// ejecutar()
-
-
-export const ContenedorProductos = contenedorProdImportado;
-// export const ContenedorCarrito = contenedorCarritoImportador;
+const ContenedorProductos = contenedorProdImportado;
+const ContenedorCarrito = contenedorCarritoImportado;
+export { ContenedorProductos,/* ContenedorCarrito,*/conectionMongo };
