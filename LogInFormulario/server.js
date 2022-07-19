@@ -10,7 +10,6 @@ import cookieParser from 'cookie-parser'
 import session from 'express-session'
 import MongoStore from 'connect-mongo'
 import { MongoClient } from 'mongodb'
-import { runInNewContext } from 'vm';
 
 let contenedorCarritoImportado = new DaoCartMongo(config.mongodb.collectionMessage)
 
