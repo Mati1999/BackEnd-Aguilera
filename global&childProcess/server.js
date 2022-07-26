@@ -11,8 +11,11 @@ import session from 'express-session'
 import MongoStore from 'connect-mongo'
 import { MongoClient } from 'mongodb'
 import passport from './passport.js'
-import flash from 'connect-flash'
-import { resolveSoa } from 'dns';
+import 'dotenv/config'
+import yargs from 'yargs'
+import process from 'process'
+import { fork } from 'child_process';
+
 
 let contenedorCarritoImportado = new DaoCartMongo(config.mongodb.collectionMessage)
 
@@ -26,11 +29,10 @@ app.engine(
 
 app.use(cookieParser())
 // const advancedOptions = { useNewUrlParse: true,useUnifiedTopology: true }
-app.use(flash());
 
 app.use(session({
     store: MongoStore.create({
-        mongoUrl: 'mongodb+srv://matias:351426351@cluster0.6lyvpyc.mongodb.net/?retryWrites=true&w=majority'
+        mongoUrl: process.env.MONGO
     }),
     secret: 'Matias',
     resave: false,
@@ -40,6 +42,38 @@ app.use(session({
     }
 }))
 
+
+const argumentos = process.argv.slice(2);
+const parsear = yargs(argumentos).default({
+    port: 0
+}).alias({
+    p: "port"
+}).argv;
+
+const info = (req,res) => {
+    const info = {
+        arguments: process.argv.slice(2),
+        platform: process.platform,
+        nodeVersion: process.version,
+        memoryTotalReserved: process.memoryUsage().rss,
+        execPath: process.execPath,
+        pid: process.pid,
+        proyectPath: process.cwd(),
+    }
+    res.render('info',{ info: info })
+    console.log(info);
+}
+
+app.get('/info',info)
+
+app.get('/randoms/:cantidad?',(req,res) => {
+    let cantidad = req.params.cantidad || "100000000";
+    let calculoFork = fork('./calculoFork.js');
+    calculoFork.send(cantidad);
+    calculoFork.on('message',(msj) => {
+        res.send(msj)
+    })
+})
 
 
 app.use(json());
@@ -57,11 +91,6 @@ let conectionMongo = mongo
 app.get('/',async (req,res) => {
     res.render('logIn')
 });
-
-// app.get("/deleteCookie",(req,res) => {
-//     res.clearCookie('connect.sid');
-//     res.redirect('/');
-// })
 
 app.post('/',passport.authenticate('login',{ failureRedirect: '/signIn',failureMessage: true }),passport.authenticate('autenticado',{ failureRedirect: '/',failureMessage: true }),async (req,res) => {
     res.redirect('/formulario/' + req.body.username)
@@ -155,6 +184,7 @@ const httpServer = new HttpServer(app);
 const socketServer = new SocketServer(httpServer);
 
 
-httpServer.listen(8080,() => {
-    console.log('Servidor iniciado');
+let puerto = parsear.p || 8080
+httpServer.listen(puerto,() => {
+    console.log('Servidor iniciado en el puerto:' + puerto);
 })
