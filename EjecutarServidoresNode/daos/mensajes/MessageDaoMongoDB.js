@@ -1,7 +1,7 @@
-import Contenedor from '../../contenedores/ContenedorMongoDb.js';
-import config from '../../config.js';
-import util from 'util'
-import norm from 'normalizr'
+const Contenedor = require('../../contenedores/ContenedorMongoDb.js');
+const config = require('../../config.js');
+const util = require('util');
+const norm = require('normalizr');
 
 
 const contenedorMongo = new Contenedor(config.mongodb.collectionMessage);
@@ -43,4 +43,4 @@ class MessageDaoMongo {
     }
 }
 
-export default MessageDaoMongo;
+module.exports = MessageDaoMongo;

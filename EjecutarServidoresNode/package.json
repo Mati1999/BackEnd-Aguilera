@@ -30,7 +30,7 @@
         "util": "^0.12.4",
         "yargs": "^17.5.1"
     },
-    "type": "module",
+    "type": "commonjs",
     "devDependencies": {
         "@faker-js/faker": "^7.3.0"
     }

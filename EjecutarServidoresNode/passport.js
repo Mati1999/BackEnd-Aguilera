@@ -1,12 +1,12 @@
-import passport from 'passport'
-import LocalStrategy from 'passport-local'
-import bcrypt from 'bcrypt'
-import config from './config.js'
-import cookieParser from 'cookie-parser'
-import session from 'express-session'
-import MongoStore from 'connect-mongo'
-import { MongoClient } from 'mongodb'
-import express from 'express'
+const passport = require('passport')
+const LocalStrategy = require('passport-local')
+const bcrypt = require('bcrypt')
+const config = require('./config.js')
+const cookieParser = require('cookie-parser')
+const session = require('express-session')
+const MongoStore = require('connect-mongo')
+const { MongoClient } = require('mongodb')
+const express = require('express')
 const app = express();
 
 
@@ -25,7 +25,9 @@ app.use(session({
 }))
 
 const mongo = new MongoClient(config.mongodb.mongo);
-await mongo.connect();
+(async () => {
+    await mongo.connect();
+})();
 let conectionMongo = mongo
 
 
@@ -70,4 +72,4 @@ passport.deserializeUser((username,callback) => {
     callback(null,username)
 })
 
-export default passport;
+module.exports = passport;

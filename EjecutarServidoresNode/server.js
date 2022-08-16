@@ -1,23 +1,24 @@
-import express,{ json,urlencoded } from 'express';
+const express = require('express');
+const { json,urlencoded } = require('express');
 const app = express();
-import { engine } from "express-handlebars"
-import { Server as HttpServer } from 'http';
-import { Server as SocketServer } from 'socket.io';
-import { faker } from '@faker-js/faker';
-import config from './config.js'
-import DaoCartMongo from './daos/mensajes/MessageDaoMongoDB.js';
-import cookieParser from 'cookie-parser'
-import session from 'express-session'
-import MongoStore from 'connect-mongo'
-import { MongoClient } from 'mongodb'
-import passport from './passport.js'
-import 'dotenv/config'
-import yargs from 'yargs'
-import process from 'process'
-import { fork } from 'child_process';
-import cluster from 'cluster';
-import os from 'os';
-import { cpus } from "os";
+const { engine } = require('express-handlebars');
+const { Server: HttpServer } = require('http');
+const { Server: SocketServer } = require('socket.io');
+const { faker } = require('@faker-js/faker');
+const config = require('./config.js');
+const DaoCartMongo = require('./daos/mensajes/MessageDaoMongoDB.js');
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
+const { MongoClient } = require('mongodb');
+const passport = require('./passport.js');
+require('dotenv').config()
+const yargs = require('yargs');
+const process = require('process');
+const { fork } = require('child_process');
+const cluster = require('cluster');
+const os = require('os');
+const { cpus } = require('os');
 
 let contenedorCarritoImportado = new DaoCartMongo(config.mongodb.collectionMessage)
 
@@ -74,13 +75,13 @@ const info = (req,res) => {
 app.get('/info',info)
 
 app.get('/randoms/:cantidad?',(req,res) => {
-    // let cantidad = req.params.cantidad || "100000000";
-    // let calculoFork = fork('./calculoFork.js');
-    // calculoFork.send(cantidad);
-    // calculoFork.on('message',(msj) => {
-    //     res.send(msj)
-    // })
-    res.send(`NGINX corriendo en el puerto ${puerto} por PID ${process.pid}`);
+    let cantidad = req.params.cantidad || "100000000";
+    let calculoFork = fork('./calculoFork.js');
+    calculoFork.send(cantidad);
+    calculoFork.on('message',(msj) => {
+        res.send(msj)
+    })
+    // res.send(`NGINX corriendo en el puerto ${puerto} por PID ${process.pid}`);
 })
 
 
@@ -93,12 +94,14 @@ app.set('view engine','hbs');
 
 //Conección con mongo
 const mongo = new MongoClient(config.mongodb.mongo);
-await mongo.connect();
+(async () => {
+    await mongo.connect();
+})();
 let conectionMongo = mongo
 
 app.get('/',async (req,res) => {
-    // res.render('logIn')
-    res.send(`NGINX corriendo en el puerto ${puerto} por PID ${process.pid}`);
+    res.render('logIn')
+    // res.send(`NGINX corriendo en el puerto ${puerto} por PID ${process.pid}`);
 });
 
 app.post('/',passport.authenticate('login',{ failureRedirect: '/signIn',failureMessage: true }),passport.authenticate('autenticado',{ failureRedirect: '/',failureMessage: true }),async (req,res) => {
@@ -192,7 +195,7 @@ app.get('/formulario/:username',async (req,res) => {
 const httpServer = new HttpServer(app);
 const socketServer = new SocketServer(httpServer);
 
-const numCPU = os.cpus().length
+const numCPU = require("os").cpus().length
 const modo = parsear.m || 'FORK'
 if (modo == 'CLUSTER') {
     if (cluster.isPrimary) {

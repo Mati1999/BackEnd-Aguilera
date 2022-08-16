@@ -15,4 +15,4 @@ const calculoPesado = (cantidad) => {
     return numbers
 }
 
-export default calculoPesado;
+module.exports = calculoPesado;

@@ -1,4 +1,4 @@
-import { conectionMongo } from '../daos/index.js';
+const { conectionMongo } = require('../daos/index.js');
 
 class Contenedor {
     constructor(collection) {
@@ -20,4 +20,4 @@ class Contenedor {
     }
 }
 
-export default Contenedor;
+module.exports = Contenedor;

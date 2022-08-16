@@ -1,4 +1,4 @@
-import calculoPesado from './calculo.js';
+const calculoPesado = require('./calculo.js');
 
 process.on('message',(msj) => {
     let cantidad = parseInt(msj)
