@@ -1,17 +1,18 @@
 const nodemailer = require('nodemailer');
+require('dotenv').config();
 
 const transport = nodemailer.createTransport({
     host: 'smtp.ethereal.email',
     port: 587,
     auth: {
-        user: 'myrl85@ethereal.email',
-        pass: 'f8PjnddZBm5h73wyCE'
+        user: process.env.EMAIL,
+        pass: process.env.PASSWORD
     }
 });
 
 transport.sendMail({
     from: 'Matias <aguileramati50@gmail.com>',
-    to: 'myrl85@ethereal.email',
+    to: process.env.EMAIL,
     html: '<h1>Que buen mail</h1>',
     subject: 'Mail de prueba'
 }).then(result => {

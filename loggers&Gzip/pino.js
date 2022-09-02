@@ -1,4 +1,5 @@
-const pino = require('pino')
+// const pino = require('pino')
+import pino from 'pino'
 
 const loggerDesarrollo = pino({ level: 'debug' })
 
@@ -6,4 +7,4 @@ const loggerProduccion = pino({ level: 'warn' },pino.destination('./warn.log'),{
 
 const logger = process.env.NODE_ENV === 'PROD' ? loggerProduccion : loggerDesarrollo;
 
-module.exports = logger;
+export default logger;
