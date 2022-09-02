@@ -189,6 +189,15 @@ app.get('/formulario/:username',async (req,res) => {
                 console.log('Mensaje enviado correctamente');
             }).catch(err => console.log(err));
 
+            //Mando mensaje al usuario que compró
+            cliente.messages.create({
+                to: process.env.TWILIO_USERPURCHASE,
+                from: process.env.TWILIO_FROMPURCHASE,
+                body: 'Su pedido a sigo recibido y se encuentra en proceso'
+            }).then((data) => {
+                console.log('Mensaje enviado correctamente');
+            }).catch(err => console.log(err));
+
             await conectionMongo.db('ecommerce').collection('ordenes').insertOne(cart);
         })
 
