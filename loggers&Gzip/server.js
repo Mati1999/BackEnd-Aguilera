@@ -3,26 +3,21 @@ const { json,urlencoded } = require('express');
 const app = express();
 const { engine } = require('express-handlebars');
 const { Server: HttpServer } = require('http');
-const { Server: SocketServer } = require('socket.io');
-const { faker } = require('@faker-js/faker');
 const config = require('./config.js');
-const DaoCartMongo = require('./daos/mensajes/MessageDaoMongoDB.js');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
-const { MongoClient } = require('mongodb');
-const passport = require('./passport.js');
 require('dotenv').config()
 const yargs = require('yargs');
 const process = require('process');
-const { fork } = require('child_process');
+// const { fork } = require('child_process');
 const cluster = require('cluster');
-const os = require('os');
-const { cpus } = require('os');
+// const { cpus } = require('os');
 const logger = require('./pino.js');
-const autocannon = require('autocannon');
-
-let contenedorCarritoImportado = new DaoCartMongo(config.mongodb.collectionMessage)
+const formRoute = require('./routes/formRoute.js')
+const logOutRoute = require('./routes/logOutRoute.js')
+const logInRoute = require('./routes/logInRoute.js')
+const signInRoute = require('./routes/signInRoute.js')
 
 app.engine(
     'hbs',
@@ -59,32 +54,32 @@ const parsear = yargs(argumentos).default({
 
 let puerto = process.env.PORT || 8080
 
-const info = (req,res) => {
-    const info = {
-        arguments: process.argv.slice(2),
-        platform: process.platform,
-        nodeVersion: process.version,
-        memoryTotalReserved: process.memoryUsage().rss,
-        execPath: process.execPath,
-        pid: process.pid,
-        proyectPath: process.cwd(),
-        CPUS: cpus().length
-    }
-    res.render('info',{ info: info })
-    logger.info(info)
-}
+// const info = (req,res) => {
+//     const info = {
+//         arguments: process.argv.slice(2),
+//         platform: process.platform,
+//         nodeVersion: process.version,
+//         memoryTotalReserved: process.memoryUsage().rss,
+//         execPath: process.execPath,
+//         pid: process.pid,
+//         proyectPath: process.cwd(),
+//         CPUS: cpus().length
+//     }
+//     res.render('info',{ info: info })
+//     logger.info(info)
+// }
 
-app.get('/info',info)
+// app.get('/info',info)
 
-app.get('/randoms/:cantidad?',(req,res) => {
-    let cantidad = req.params.cantidad || "100000000";
-    let calculoFork = fork('./calculoFork.js');
-    calculoFork.send(cantidad);
-    calculoFork.on('message',(msj) => {
-        res.send(msj)
-    })
-    // res.send(`NGINX corriendo en el puerto ${puerto} por PID ${process.pid}`);
-})
+// app.get('/randoms/:cantidad?',(req,res) => {
+//     let cantidad = req.params.cantidad || "100000000";
+//     let calculoFork = fork('./calculoFork.js');
+//     calculoFork.send(cantidad);
+//     calculoFork.on('message',(msj) => {
+//         res.send(msj)
+//     })
+//     // res.send(`NGINX corriendo en el puerto ${puerto} por PID ${process.pid}`);
+// })
 
 
 app.use(json());
@@ -94,105 +89,14 @@ app.use(express.static("public"));
 app.set('views','./public/hbs_views');
 app.set('view engine','hbs');
 
-//Conección con mongo
-const mongo = new MongoClient(config.mongodb.mongo);
-(async () => {
-    await mongo.connect();
-})();
-let conectionMongo = mongo
 
-app.get('/',async (req,res) => {
-    res.render('logIn')
-    // res.send(`NGINX corriendo en el puerto ${puerto} por PID ${process.pid}`);
-});
+// Uso las rutas 
 
-app.post('/',passport.authenticate('login',{ failureRedirect: '/signIn',failureMessage: true }),passport.authenticate('autenticado',{ failureRedirect: '/',failureMessage: true }),async (req,res) => {
-    res.redirect('/formulario/' + req.body.username)
-})
+app.use('/formulario',formRoute)
+app.use('/logOut',logOutRoute)
+app.use('/',logInRoute)
+app.use('/signIn',signInRoute)
 
-app.get('/logOut',async (req,res) => {
-    req.session.destroy((err) => {
-        console.log(err);
-        console.log('Hasta luego');
-    })
-    res.render('logOut')
-})
-
-app.get('/signIn',async (req,res) => {
-    res.render('signIn')
-})
-
-app.post('/signIn',passport.authenticate('registracion',{ failureRedirect: '/',failureMessage: true }),async (req,res) => {
-    res.redirect('/formulario/' + req.body.username)
-})
-
-app.get('/formulario/:username',async (req,res) => {
-    const mongo = new MongoClient(config.mongodb.mongo);
-    await mongo.connect();
-    let username = req.params.username;
-    req.session.username = username;
-    req.session.request = req.session.request == null ? 1 : req.session.request + 1
-    res.render('formulario')
-
-    socketServer.on('connection',async (socket) => {
-        socket.emit('user',username);
-        socket.emit('messages',await contenedorCarritoImportado.getAll())
-        let productos = [
-            {
-                nombre: faker.name.findName(),
-                precio: faker.commerce.price(),
-                foto: faker.image.imageUrl()
-            },
-            {
-                nombre: faker.name.findName(),
-                precio: faker.commerce.price(),
-                foto: faker.image.imageUrl()
-            },
-            {
-                nombre: faker.name.findName(),
-                precio: faker.commerce.price(),
-                foto: faker.image.imageUrl()
-            },
-            {
-                nombre: faker.name.findName(),
-                precio: faker.commerce.price(),
-                foto: faker.image.imageUrl()
-            },
-            {
-                nombre: faker.name.findName(),
-                precio: faker.commerce.price(),
-                foto: faker.image.imageUrl()
-            },
-        ]
-        socket.emit('products',productos)
-
-        socket.on('new_message',async (mensaje) => {
-            console.log(mensaje);
-            await contenedorCarritoImportado.saveMessage(mensaje)
-            let mensajes = await contenedorCarritoImportado.getAll();
-            socketServer.sockets.emit('messages',mensajes);
-        });
-
-        socket.on('new_products',async (products) => {
-            let productos = products
-            socketServer.sockets.emit('products',productos);
-        });
-
-        socket.on('new_user',async (user) => {
-            let sesion = await conectionMongo.db('test').collection('sessions').find({}).toArray();
-            console.log(sesion);
-            let usuario = sesion[sesion.length - 1];
-            if (usuario === undefined) {
-                console.log('Sesión cerrada');
-                socket.emit('user',false);
-            } else {
-                socket.emit('user',username);
-            }
-        })
-    })
-
-
-})
 
 app.use((req,res,next) => {
     logger.warn('Ruta invalida')
@@ -200,7 +104,6 @@ app.use((req,res,next) => {
 })
 
 const httpServer = new HttpServer(app);
-const socketServer = new SocketServer(httpServer);
 
 const numCPU = require("os").cpus().length
 const modo = parsear.m || 'FORK'
