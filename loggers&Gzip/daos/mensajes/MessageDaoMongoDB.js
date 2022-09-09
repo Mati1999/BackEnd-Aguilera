@@ -1,10 +1,13 @@
-const Contenedor = require('../../contenedores/ContenedorMongoDb.js');
-const config = require('../../config.js');
-const util = require('util');
+// const Contenedor = require('../../contenedores/ContenedorMongoDb.js');
+// const config = require('../../config.js');
+// const util = require('util');
+const { DaoFactory } = require('../daoFactory.js')
 const norm = require('normalizr');
 
+const daosFactory = new DaoFactory();
 
-const contenedorMongo = new Contenedor(config.mongodb.collectionMessage);
+const contenedorMongo = daosFactory.create('mongo')
+// const contenedorMongo = new Contenedor(config.mongodb.collectionMessage);
 
 class MessageDaoMongo {
     constructor(archivo) {
